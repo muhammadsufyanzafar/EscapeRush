@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#121530"
+    android:padding="24dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView android:text="Settings" android:textColor="@android:color/white"
+        android:textStyle="bold" android:textSize="22sp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    <TextView android:text="Controls" android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    <RadioButton android:id="@+id/rbSwipe" android:text="Swipe" android:textColor="@android:color/white"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <RadioButton android:id="@+id/rbTilt" android:text="Tilt" android:textColor="@android:color/white"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    <TextView android:text="Sound" android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <Switch android:id="@+id/swSound" android:checked="true"
+        android:layout_width="48dp" android:layout_height="72dp"/>
+
+    <TextView android:text="Select Area" android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:id="@+id/btnPrevArea" android:text="-" android:textColor="@android:color/white" android:textSize="20sp"
+            android:padding="8dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/txtSelectedArea" android:text="Area: Forest" android:textColor="@android:color/white"
+            android:layout_marginHorizontal="12dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/btnNextArea" android:text="-" android:textColor="@android:color/white" android:textSize="20sp"
+            android:padding="8dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <TextView
+        android:text="Areas unlock as you collect coins across runs. Try to reach the Desert and City!"
+        android:textColor="#B0C4FF"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+</LinearLayout>

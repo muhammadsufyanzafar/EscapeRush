@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Escape Rush</string>
+    <string-array name="area_names">
+        <item>Forest</item>
+        <item>Desert</item>
+        <item>City</item>
+    </string-array>
+
+    <string name="privacy_text">
+        This game displays ads and may use device identifiers to deliver and measure personalized or non-personalized advertising. We use AppLovin (MAX) as our ad provider. Data collected may include IP address, device identifiers, and app usage for ad delivery, frequency capping, and fraud prevention. Consent is requested where required by law (e.g., GDPR). We do not collect sensitive personal information nor sell personal data. You can change consent preferences via your device settings or the in-app consent prompt. Children’s privacy: This app is not directed to children under the age of 13 (or as defined in your region). Contact: support@yourdomain.com
+    </string>
+
+    <string name="terms_text">
+        By using Escape Rush 3D, you agree not to misuse the app or attempt to disrupt its functionality. The game is provided “as is” without warranties. We reserve the right to update features, ads, or services at any time. In-app advertising is provided by AppLovin MAX and is subject to their terms. Your continued use after updates constitutes acceptance of any changes. If you do not agree, please discontinue use.
+    </string>
+</resources>

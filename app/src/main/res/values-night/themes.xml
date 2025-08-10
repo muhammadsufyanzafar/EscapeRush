@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.EscapeRush3D" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#0F1220</item>
+        <item name="android:navigationBarColor">#0F1220</item>
+    </style>
+
+    <style name="Theme.EscapeRush3D.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>

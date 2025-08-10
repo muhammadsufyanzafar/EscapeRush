@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="forest_bg">#114422</color>
+    <color name="desert_bg">#8C5C2E</color>
+    <color name="city_bg">#1B2B54</color>
+
+    <array name="area_bg_colors">
+        <item>@color/forest_bg</item>
+        <item>@color/desert_bg</item>
+        <item>@color/city_bg</item>
+    </array>
+</resources>
