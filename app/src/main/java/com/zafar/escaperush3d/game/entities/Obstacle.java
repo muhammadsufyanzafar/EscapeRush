@@ -23,6 +23,7 @@ public class Obstacle extends Entity {
 
     @Override
     public void draw(Canvas c) {
-        c.drawRoundRect(new RectF(x - w/2f, y - h/2f, x + w/2f, y + h/2f), 16f, 16f, paint);
+        float left = x - w / 2f, top = y - h / 2f;
+        c.drawRoundRect(left, top, left + w, top + h, 16f, 16f, paint);
     }
 }

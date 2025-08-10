@@ -24,6 +24,8 @@ public class GameActivity extends AppCompatActivity implements GameSurfaceView.G
     private int finalScore = 0, finalCoins = 0;
     private boolean reviveUsed = false; // allow one revive per run
 
+    private boolean resultsCommitted = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,39 +63,29 @@ public class GameActivity extends AppCompatActivity implements GameSurfaceView.G
                 @Override public void onReward(AdsManager.RewardPurpose purpose) {
                     reviveUsed = true;
                     gameOverOverlay.setVisibility(View.GONE);
-                    gameView.revivePlayer();
+                    gameView.revivePlayer(); // do NOT commit results yet
                 }
                 @Override public void onClosedNoReward() {}
             });
         });
+
         btnDoubleCoins.setOnClickListener(v -> {
             AdsManager.getInstance().showRewarded(this, AdsManager.RewardPurpose.DOUBLE_COINS, new AdsManager.RewardCallback() {
                 @Override public void onReward(AdsManager.RewardPurpose purpose) {
-                    finalCoins *= 2;
+                    finalCoins *= 2;                 // change pending
                     txtFinalCoins.setText("Coins: " + finalCoins);
+                    updateNewAreaLabel();            // recompute unlock preview
                 }
                 @Override public void onClosedNoReward() {}
             });
         });
-        btnGameOverMenu.setOnClickListener(v -> finish());
+
+        btnGameOverMenu.setOnClickListener(v -> {
+            commitResultsIfNeeded();
+            finish();
+        });
+
         btnGameOverRestart.setOnClickListener(v -> restartRun());
-    }
-
-    private void restartRun() {
-        // Hide overlays
-        if (pauseOverlay.getVisibility() == View.VISIBLE) {
-            pauseOverlay.setVisibility(View.GONE);
-        }
-        gameOverOverlay.setVisibility(View.GONE);
-
-        // Reset flags
-        reviveUsed = false;
-
-        // Make sure the game loop is running
-        gameView.resumeGame();
-
-        // Reset world safely on the game thread
-        gameView.startNewRun();
     }
 
     @SuppressLint("MissingSuperCall")
@@ -112,16 +104,58 @@ public class GameActivity extends AppCompatActivity implements GameSurfaceView.G
     public void onGameOver(int score, int coins, boolean newAreaUnlocked) {
         finalScore = score;
         finalCoins = coins;
+        resultsCommitted = false;
 
-        // Persist score and coins; unlocks are handled here after coins added
-        GameRepository.addScore(score, coins);
-
-        txtFinalScore.setText("Score: " + score);
+        txtFinalScore.setText("Score: " + finalScore);
         txtFinalCoins.setText("Coins: " + finalCoins);
-        txtNewArea.setVisibility(newAreaUnlocked ? View.VISIBLE : View.GONE);
+        // Predict unlock with current totals + pending coins
+        updateNewAreaLabel();
+
         gameOverOverlay.setVisibility(View.VISIBLE);
 
-        // Show an interstitial ad between runs (compliant with policies)
         AdsManager.getInstance().showInterstitialIfReady(this, null);
+    }
+
+    private void updateNewAreaLabel() {
+        int[] thresholds = com.zafar.escaperush3d.util.Constants.AREA_COIN_THRESHOLDS;
+        int beforeTotal = com.zafar.escaperush3d.util.Prefs.getTotalCoins();
+        int beforeUnlocked = 0, afterUnlocked = 0;
+        for (int t : thresholds) if (beforeTotal >= t) beforeUnlocked++;
+        int afterTotal = beforeTotal + finalCoins;
+        for (int t : thresholds) if (afterTotal >= t) afterUnlocked++;
+        txtNewArea.setVisibility(afterUnlocked > beforeUnlocked ? View.VISIBLE : View.GONE);
+    }
+
+    private void commitResultsIfNeeded() {
+        if (resultsCommitted) return;
+        GameRepository.addScore(finalScore, finalCoins);
+        resultsCommitted = true;
+    }
+
+    private void restartRun() {
+        // Hide overlays
+        if (pauseOverlay.getVisibility() == View.VISIBLE) pauseOverlay.setVisibility(View.GONE);
+        gameOverOverlay.setVisibility(View.GONE);
+
+        // Commit the last run before restarting
+        commitResultsIfNeeded();
+
+        reviveUsed = false;
+        gameView.resumeGame();
+        gameView.startNewRun();
+    }
+
+    @Override
+    protected void onPause() {
+        gameView.pauseGame();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gameView.resumeGame();
+        // Keep screen on instead of WAKE_LOCK permission
+        gameView.setKeepScreenOn(true);
     }
 }

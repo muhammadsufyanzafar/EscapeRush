@@ -80,13 +80,11 @@ public class Player extends Entity {
 
     @Override public void update(float dt, float speedPx) { /* unused by Player; overloaded above */ }
 
-    @Override public void draw(Canvas c) {
-        // Player body (rounded rect)
-        float left = x - w/2f, top = y - h/2f;
-        c.drawRoundRect(new RectF(left, top, left + w, top + h), 24f, 24f, paint);
-        if (shield) {
-            c.drawCircle(x, y, Math.max(w, h), shieldPaint);
-        }
+    @Override
+    public void draw(Canvas c) {
+        float left = x - w / 2f, top = y - h / 2f;
+        c.drawRoundRect(left, top, left + w, top + h, 24f, 24f, paint);
+        if (shield) c.drawCircle(x, y, Math.max(w, h), shieldPaint);
     }
 
     public void moveLane(int dir) {

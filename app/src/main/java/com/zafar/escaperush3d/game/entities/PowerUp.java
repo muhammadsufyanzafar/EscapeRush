@@ -30,7 +30,8 @@ public class PowerUp extends Entity {
 
     @Override
     public void draw(Canvas c) {
-        c.drawRoundRect(new RectF(x - w/2f, y - h/2f, x + w/2f, y + h/2f), 14f, 14f, paint);
+        float left = x - w / 2f, top = y - h / 2f;
+        c.drawRoundRect(left, top, left + w, top + h, 14f, 14f, paint);
     }
 
     public PowerUpType getType() { return type; }

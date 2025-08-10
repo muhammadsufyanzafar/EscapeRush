@@ -1,3 +1,4 @@
+// app/src/main/java/com/zafar/escaperush3d/game/GameWorld.java
 package com.zafar.escaperush3d.game;
 
 import android.content.Context;
@@ -5,10 +6,13 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
-import android.view.WindowManager;
 import android.util.Log;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
 
 import com.zafar.escaperush3d.R;
 import com.zafar.escaperush3d.game.entities.Coin;
@@ -39,26 +43,24 @@ public class GameWorld {
     private final Context context;
     private final GameOverListener listener;
 
+    // Screen and pacing
     private int screenW, screenH;
-    private float speedPx; // current speed in px/s
+    private float speedPx;           // current speed in px/s
     private float gameTime = 0f;
 
+    // Entities
     private final Player player;
     private final List<Obstacle> obstacles = new ArrayList<>();
     private final List<Coin> coins = new ArrayList<>();
     private final List<PowerUp> powerUps = new ArrayList<>();
 
+    // Systems
     private final float[] lanesX;
     private final Spawner spawner;
     private final CollisionDetector collisionDetector = new CollisionDetector();
     private final ParallaxBackground bg;
 
-    private int score = 0;
-    private int coinCount = 0;
-    private boolean gameOver = false;
-    private boolean newAreaUnlocked = false;
-
-    // HUD styling
+    // HUD
     private final Paint hudPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint hudBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint.FontMetrics hudFm;
@@ -67,6 +69,13 @@ public class GameWorld {
     private float hudCornerPx;
     private float hudLeftPx;
     private float hudTopPx;
+    private final Paint lanePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    // Score/state
+    private int score = 0;
+    private int coinCount = 0;
+    private boolean gameOver = false;
+    private boolean newAreaUnlocked = false;
 
     // Tilt handling (smooth, hysteresis, cooldown)
     private float tiltSmoothed = 0f;
@@ -86,34 +95,32 @@ public class GameWorld {
         context = ctx;
         listener = l;
 
-        // Compute once; avoids importing BuildConfig
         isDebugBuild = (ctx.getApplicationInfo().flags
                 & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
 
-        DisplayMetrics dm = new DisplayMetrics();
-        WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getRealMetrics(dm);
-        screenW = dm.widthPixels;
-        screenH = dm.heightPixels;
+        // Determine screen size
+        computeScreenSize(ctx);
 
+        // Lanes centered across width
         lanesX = new float[Constants.LANE_COUNT];
         float laneWidth = screenW / (float) Constants.LANE_COUNT;
         for (int i = 0; i < Constants.LANE_COUNT; i++) {
             lanesX[i] = laneWidth * i + laneWidth / 2f;
         }
 
-        speedPx = Constants.BASE_SPEED * (screenH / 1920f); // scale speed to device height
+        // Scale base speed by display height for similar feel across devices
+        speedPx = Constants.BASE_SPEED * (screenH / 1920f);
         player = new Player(lanesX, screenH);
 
         spawner = new Spawner(screenW, screenH, lanesX);
         bg = new ParallaxBackground(screenW, screenH);
 
         // HUD sizing/positioning
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
         float density = dm.density;
         float scaledDensity = dm.scaledDensity;
-
-        // Decide SP size based on smallest width in dp
         float dpWidth = screenW / density;
+
         float spSize;
         if (dpWidth >= 600)      spSize = 22f;
         else if (dpWidth >= 480) spSize = 20f;
@@ -121,23 +128,51 @@ public class GameWorld {
         else if (dpWidth >= 392) spSize = 17f;
         else                     spSize = 16f;
 
-        // Paint setup
         hudPaint.setColor(Color.WHITE);
-        hudPaint.setTextSize(spSize * scaledDensity); // Canvas uses pixels; we convert sp->px
+        hudPaint.setTextSize(spSize * scaledDensity); // Canvas uses px; convert sp->px
         hudPaint.setShadowLayer(3f * density, 0f, 2f * density, Color.argb(180, 0, 0, 0));
         hudFm = hudPaint.getFontMetrics();
         hudLineHeight = hudFm.bottom - hudFm.top;
 
-        // Background card paint
         hudBgPaint.setColor(Color.argb(80, 0, 0, 0)); // translucent dark
 
-        // Padding/margins
         hudPaddingPx = 8f * density;
         hudCornerPx = 10f * density;
         hudLeftPx = 12f * density;
         hudTopPx = getStatusBarHeightPx(context) + 12f * density; // respect status bar
 
+        lanePaint.setColor(Color.argb(50, 255, 255, 255));
+
         applyAreaTheme(Prefs.getSelectedArea());
+    }
+
+    private void computeScreenSize(Context ctx) {
+        try {
+            if (Build.VERSION.SDK_INT >= 30) {
+                WindowManager wm = ctx.getSystemService(WindowManager.class);
+                if (wm != null) {
+                    WindowMetrics metrics = wm.getCurrentWindowMetrics();
+                    Rect b = metrics.getBounds();
+                    screenW = b.width();
+                    screenH = b.height();
+                    return;
+                }
+            }
+            // Fallback for older devices
+            DisplayMetrics dm = new DisplayMetrics();
+            WindowManager wmOld = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+            if (wmOld != null) {
+                //noinspection deprecation
+                wmOld.getDefaultDisplay().getRealMetrics(dm);
+                screenW = dm.widthPixels;
+                screenH = dm.heightPixels;
+                return;
+            }
+        } catch (Throwable ignored) { }
+        // Last resort
+        DisplayMetrics dmRes = ctx.getResources().getDisplayMetrics();
+        screenW = dmRes.widthPixels;
+        screenH = dmRes.heightPixels;
     }
 
     private float getStatusBarHeightPx(Context ctx) {
@@ -205,7 +240,7 @@ public class GameWorld {
         // Score increases with time and speed
         score += (int) (dt * (speedPx / 10f));
 
-        // LevelManager tick
+        // LevelManager tick (if you later want dynamic difficulty/unlocks)
         LevelManager.getInstance().tickForUnlock(coinCount);
     }
 
@@ -245,9 +280,7 @@ public class GameWorld {
     public void draw(Canvas c) {
         bg.draw(c);
 
-        // Draw subtle lane dividers
-        Paint lanePaint = new Paint();
-        lanePaint.setColor(Color.argb(50, 255, 255, 255));
+        // Subtle lane dividers (reused Paint to avoid per-frame allocations)
         for (int i = 1; i < Constants.LANE_COUNT; i++) {
             float x = (screenW / (float) Constants.LANE_COUNT) * i;
             c.drawRect(x - 2, 0, x + 2, screenH, lanePaint);
@@ -268,7 +301,7 @@ public class GameWorld {
                 Math.max(hudPaint.measureText(s2), hudPaint.measureText(s3)));
         float h = hudLineHeight * 3f;
 
-        // Draw a soft card background
+        // Card background
         float left = hudLeftPx;
         float top = hudTopPx;
         float right = left + w + hudPaddingPx * 2f;

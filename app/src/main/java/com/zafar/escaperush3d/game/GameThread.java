@@ -34,35 +34,30 @@ public class GameThread extends Thread {
     public void run() {
         long last = System.nanoTime();
         final double nsPerSec = 1_000_000_000.0;
+        final long targetFrameNs = 16_666_667L; // ~60 Hz
 
         while (running) {
+            long frameStart = System.nanoTime();
+
             if (paused) {
-                try { sleep(16); } catch (InterruptedException ignored) {}
+                try { Thread.sleep(16); } catch (InterruptedException ignored) {}
                 last = System.nanoTime();
                 continue;
             }
 
             long now = System.nanoTime();
             float dt = (float) ((now - last) / nsPerSec);
-            if (dt > 0.05f) dt = 0.05f; // clamp
+            if (dt > 0.05f) dt = 0.05f;
             last = now;
 
-            // Run queued tasks on the game thread
+            // Run queued tasks
             try {
                 synchronized (taskQueue) {
-                    while (!taskQueue.isEmpty()) {
-                        taskQueue.removeFirst().run();
-                    }
+                    while (!taskQueue.isEmpty()) taskQueue.removeFirst().run();
                 }
-            } catch (Throwable t) {
-                Log.e("GameThread", "Task error", t);
-            }
+            } catch (Throwable t) { Log.e("GameThread", "Task error", t); }
 
-            try {
-                world.update(dt);
-            } catch (Throwable t) {
-                Log.e("GameThread", "Update error", t);
-            }
+            try { world.update(dt); } catch (Throwable t) { Log.e("GameThread", "Update error", t); }
 
             Canvas c = null;
             try {
@@ -72,6 +67,14 @@ public class GameThread extends Thread {
                 Log.e("GameThread", "Draw error", t);
             } finally {
                 if (c != null) holder.unlockCanvasAndPost(c);
+            }
+
+            // Frame pacing
+            long frameNs = System.nanoTime() - frameStart;
+            long sleepNs = targetFrameNs - frameNs;
+            if (sleepNs > 0) {
+                try { Thread.sleep(sleepNs / 1_000_000L, (int) (sleepNs % 1_000_000L)); }
+                catch (InterruptedException ignored) {}
             }
         }
     }

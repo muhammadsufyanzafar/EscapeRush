@@ -36,7 +36,7 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildFeatures { buildConfig = true }
+        buildConfig = true
     }
 
     packaging {

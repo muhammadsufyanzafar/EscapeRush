@@ -4,7 +4,8 @@
     android:id="@+id/root"
     android:background="#101319"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
 
     <com.zafar.escaperush3d.game.GameSurfaceView
         android:id="@+id/gameView"
