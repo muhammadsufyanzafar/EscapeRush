@@ -15,5 +15,8 @@
 -keep class androidx.lifecycle.** { *; }
 -keep interface androidx.lifecycle.** { *; }
 
+-keep class com.unity3d.ads.** { *; }
+-keep class com.unity3d.services.** { *; }
+
 # (Optional) Keep your game classes if you later use reflection
 # -keep class com.zafar.escaperush3d.** { *; }

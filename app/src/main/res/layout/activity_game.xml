@@ -7,11 +7,13 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
+    <!-- Main Game View -->
     <com.zafar.escaperush3d.game.GameSurfaceView
         android:id="@+id/gameView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Pause Button -->
     <ImageView
         android:id="@+id/btnPause"
         android:layout_width="40dp"
@@ -21,7 +23,7 @@
         android:src="@android:drawable/ic_media_pause"
         app:tint="@android:color/white" />
 
-    <!-- Pause overlay -->
+    <!-- Pause Overlay -->
     <LinearLayout
         android:id="@+id/overlayPause"
         android:visibility="gone"
@@ -30,23 +32,29 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <Button android:id="@+id/btnResume"
+
+        <Button
+            android:id="@+id/btnResume"
             android:text="Resume"
             android:layout_width="200dp"
-            android:layout_height="48dp"/>
-        <Button android:id="@+id/btnRestart"
+            android:layout_height="48dp" />
+
+        <Button
+            android:id="@+id/btnRestart"
             android:layout_marginTop="12dp"
             android:text="Restart"
             android:layout_width="200dp"
-            android:layout_height="48dp"/>
-        <Button android:id="@+id/btnMainMenu"
+            android:layout_height="48dp" />
+
+        <Button
+            android:id="@+id/btnMainMenu"
             android:layout_marginTop="12dp"
             android:text="Main Menu"
             android:layout_width="200dp"
-            android:layout_height="48dp"/>
+            android:layout_height="48dp" />
     </LinearLayout>
 
-    <!-- Game over overlay -->
+    <!-- Game Over Overlay -->
     <LinearLayout
         android:id="@+id/overlayGameOver"
         android:visibility="gone"
@@ -57,70 +65,80 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView android:text="Game Over"
+        <TextView
+            android:text="Game Over"
             android:textColor="@android:color/white"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
-        <TextView android:id="@+id/txtFinalScore"
+        <TextView
+            android:id="@+id/txtFinalScore"
             android:textColor="@android:color/white"
             android:layout_marginTop="12dp"
             android:text="Score: 0"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
-        <TextView android:id="@+id/txtFinalCoins"
+        <!-- This will update dynamically from GameActivity -->
+        <TextView
+            android:id="@+id/txtFinalCoins"
             android:textColor="@android:color/white"
             android:layout_marginTop="6dp"
             android:text="Coins: 0"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
-        <TextView android:id="@+id/txtNewArea"
+        <TextView
+            android:id="@+id/txtNewArea"
             android:textColor="#FFEB3B"
             android:layout_marginTop="6dp"
             android:text="New Area Unlocked!"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
+        <!-- Revive and Double Coins Row -->
         <LinearLayout
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <Button android:id="@+id/btnRevive"
+            <Button
+                android:id="@+id/btnRevive"
                 android:text="Watch Ad to Revive"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
-            <Button android:id="@+id/btnDoubleCoins"
+            <Button
+                android:id="@+id/btnDoubleCoins"
                 android:text="Double Coins (Ad)"
                 android:layout_marginStart="12dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
+        <!-- Game Over Buttons -->
         <LinearLayout
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <Button android:id="@+id/btnGameOverRestart"
+            <Button
+                android:id="@+id/btnGameOverRestart"
                 android:text="Restart"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
-            <Button android:id="@+id/btnGameOverMenu"
+            <Button
+                android:id="@+id/btnGameOverMenu"
                 android:text="Main Menu"
                 android:layout_marginStart="12dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
 

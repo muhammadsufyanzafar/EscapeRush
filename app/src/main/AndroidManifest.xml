@@ -12,6 +12,7 @@
         android:label="Escape Rush 3D"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:hardwareAccelerated="true"
         android:theme="@style/Theme.EscapeRush3D">
         <activity
             android:name=".ui.activities.GameActivity"
@@ -44,10 +45,8 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- AppLovin MAX SDK key (replace with your key) -->
-        <meta-data
-            android:name="applovin.sdk.key"
-            android:value="YOUR_APPLOVIN_SDK_KEY" />
+        </activity>
+
     </application>
 
 </manifest>

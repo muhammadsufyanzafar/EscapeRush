@@ -14,9 +14,9 @@ import android.hardware.SensorManager;
 public class TiltController implements SensorEventListener {
     public interface TiltListener { void onTilt(float analog); }
 
-    private final SensorManager sm;
-    private final Sensor rotSensor;   // preferred
-    private final Sensor accelSensor; // fallback
+    private SensorManager sm;
+    private Sensor rotSensor;   // preferred
+    private Sensor accelSensor; // fallback
     private final TiltListener listener;
 
     private final float[] rotMatrix = new float[9];
@@ -34,13 +34,20 @@ public class TiltController implements SensorEventListener {
     private final float accelAlpha = 0.15f;
 
     public TiltController(Context ctx, TiltListener l) {
-        sm = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
-        rotSensor = sm.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
-        accelSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         listener = l;
+
+        // Prevent crash in Android Studio preview mode
+        if (ctx != null && !isEditModeContext(ctx)) {
+            sm = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
+            if (sm != null) {
+                rotSensor = sm.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
+                accelSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            }
+        }
     }
 
     public void start() {
+        if (sm == null) return; // No sensors in preview mode
         baselineSet = false; // force re-calibration on start
         ema = 0f;
         if (rotSensor != null) {
@@ -53,7 +60,9 @@ public class TiltController implements SensorEventListener {
     }
 
     public void stop() {
-        sm.unregisterListener(this);
+        if (sm != null) {
+            sm.unregisterListener(this);
+        }
     }
 
     // Let UI ask for a fresh baseline (e.g., on restart)
@@ -63,6 +72,8 @@ public class TiltController implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if (sm == null) return; // Skip in preview mode
+
         float analog; // [-1..1], right tilt positive
 
         if (usingRotation && event.sensor.getType() == Sensor.TYPE_GAME_ROTATION_VECTOR) {
@@ -96,9 +107,21 @@ public class TiltController implements SensorEventListener {
         listener.onTilt(ema);
     }
 
-    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 
     private static float clamp(float v, float min, float max) {
         return v < min ? min : (v > max ? max : v);
+    }
+
+    /**
+     * Detect if we’re in Android Studio’s layout preview mode.
+     */
+    private static boolean isEditModeContext(Context ctx) {
+        try {
+            return (Boolean) ctx.getClass().getMethod("isInEditMode").invoke(ctx);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

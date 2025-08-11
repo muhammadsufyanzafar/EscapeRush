@@ -8,7 +8,7 @@ pluginManagement {
             }
         }
         mavenCentral()
-        maven("https://artifacts.applovin.com/android")
+        // REMOVED AppLovin repository
         gradlePluginPortal()
     }
 }
@@ -17,8 +17,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // Required for AppLovin MAX runtime dependency
-        maven("https://artifacts.applovin.com/android")
+        // REMOVED AppLovin repository
     }
 }
 

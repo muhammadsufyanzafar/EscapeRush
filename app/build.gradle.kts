@@ -36,7 +36,7 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
+        buildFeatures { buildConfig = true }
     }
 
     packaging {
@@ -67,8 +67,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata:2.8.4")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-    // AppLovin MAX (ads)
-    implementation("com.applovin:applovin-sdk:12.6.0")
+    // Unity Ads (REPLACED AppLovin)
+    implementation("com.unity3d.ads:unity-ads:4.10.0")
 
     // Google UMP (consent)
     implementation("com.google.android.ump:user-messaging-platform:2.2.0")

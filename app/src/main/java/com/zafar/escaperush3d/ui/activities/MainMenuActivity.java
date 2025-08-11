@@ -13,9 +13,6 @@ import com.zafar.escaperush3d.ui.viewmodel.MainViewModel;
 import com.zafar.escaperush3d.util.AdsManager;
 import com.zafar.escaperush3d.util.Prefs;
 
-/**
- * Main menu with navigation and stats.
- */
 public class MainMenuActivity extends AppCompatActivity {
     private MainViewModel vm;
 
@@ -36,17 +33,24 @@ public class MainMenuActivity extends AppCompatActivity {
         TextView txtCoins = findViewById(R.id.txtCoins);
         TextView txtArea = findViewById(R.id.txtArea);
 
+        // Preload ads early
+        AdsManager.getInstance().preloadInterstitial();
+        AdsManager.getInstance().preloadRewarded();
+
         vm.getTotalCoins().observe(this, coins -> txtCoins.setText("Coins: " + coins));
 
         int area = Prefs.getSelectedArea();
         String[] names = getResources().getStringArray(R.array.area_names);
         txtArea.setText("Area: " + names[area]);
 
+        // Play button — show interstitial then start game
         btnPlay.setOnClickListener(v -> {
-            AdsManager.getInstance().preloadInterstitial(this);
-            AdsManager.getInstance().preloadRewarded(this);
-            startActivity(new Intent(this, GameActivity.class));
+            AdsManager.getInstance().showInterstitialIfReady(
+                    this,
+                    () -> startActivity(new Intent(this, GameActivity.class))
+            );
         });
+
         btnSettings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
         btnLeaderboard.setOnClickListener(v -> startActivity(new Intent(this, LeaderboardActivity.class)));
         btnAbout.setOnClickListener(v -> startActivity(new Intent(this, AboutActivity.class)));
