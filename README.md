@@ -21,7 +21,7 @@ Built with **Android Studio** using **Java**, Escape Rush delivers smooth gamepl
 ## 📸 Screenshots
 | Home | Gameplay | Game Over |
 |------|-----------|-----------|
-| ![S 1]() | ![S 2]() | ![S 3]() |
+| ![S 1](https://i.postimg.cc/VLvNb4mr/Escape-Rush-1.jpg) | ![S 2](https://i.postimg.cc/vZ6H0B1G/Escape-Rush-2.jpg) | ![S 3](https://i.postimg.cc/8PYzdWzy/Escape-Rush-3.jpg) |
 
 ---
 
