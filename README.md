@@ -67,7 +67,7 @@ You will need to download **Git**, **JDK** & **Android Studio** to run this proj
 2. After forking, open your terminal and run the following commands to clone the repo:
 
   ```bash
-  git clone https://github.com/muhammadsufyanzafar/EscapeRush.git
+  git clone https://github.com/muhammadsufyanzafar/EscapeRush---A-2D-Car-Game.git
   ```
 Navigate to the Project Directory 📂
 Once the repository is cloned, change your directory to the project folder:
